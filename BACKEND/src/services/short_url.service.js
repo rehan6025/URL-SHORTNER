@@ -5,6 +5,9 @@ import { saveShortUrl } from "../dao/short_url.js";
 export const createShortUrlWithoutUser = async (url) => {
   const shortUrl = generateNanoId(7);
   // short own logic for prev deletes :) -- await urlSchema.deleteMany({ full_url: url });
+
+  if (!shortUrl) throw new Error("Short Url not generated");
+
   await saveShortUrl(shortUrl, url);
   return shortUrl;
 };

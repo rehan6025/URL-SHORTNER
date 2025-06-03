@@ -4,15 +4,19 @@ import {
   createShortUrlWithUser,
 } from "../services/short_url.service.js";
 
-export const createShortUrl = async (req, res) => {
-  const { url, user_id } = req.body;
-  let shortUrl;
-  if (user_id) {
-    shortUrl = await createShortUrlWithUser(url, user_id);
-  } else {
-    shortUrl = await createShortUrlWithoutUser(url);
+export const createShortUrl = async (req, res, next) => {
+  try {
+    const { url, user_id } = req.body;
+    let shortUrl;
+    if (user_id) {
+      shortUrl = await createShortUrlWithUser(url, user_id);
+    } else {
+      shortUrl = await createShortUrlWithoutUser(url);
+    }
+    res.send(process.env.APP_URL + shortUrl);
+  } catch (err) {
+    next(err);
   }
-  res.send(process.env.APP_URL + shortUrl);
 };
 
 export const redirectFromShortUrl = async (req, res) => {
