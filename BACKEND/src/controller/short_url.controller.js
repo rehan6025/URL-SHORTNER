@@ -3,23 +3,20 @@ import {
   createShortUrlWithoutUser,
   createShortUrlWithUser,
 } from "../services/short_url.service.js";
+import wrapAsync from "../utils/tryCatchWrapper.js";
 
-export const createShortUrl = async (req, res, next) => {
-  try {
-    const { url, user_id } = req.body;
-    let shortUrl;
-    if (user_id) {
-      shortUrl = await createShortUrlWithUser(url, user_id);
-    } else {
-      shortUrl = await createShortUrlWithoutUser(url);
-    }
-    res.send(process.env.APP_URL + shortUrl);
-  } catch (err) {
-    next(err);
+export const createShortUrl = wrapAsync(async (req, res) => {
+  const { url, user_id } = req.body;
+  let shortUrl;
+  if (user_id) {
+    shortUrl = await createShortUrlWithUser(url, user_id);
+  } else {
+    shortUrl = await createShortUrlWithoutUser(url);
   }
-};
+  res.send(process.env.APP_URL + shortUrl);
+});
 
-export const redirectFromShortUrl = async (req, res) => {
+export const redirectFromShortUrl = wrapAsync(async (req, res) => {
   const { id } = req.params;
   const url = await getShortUrl(id);
   if (url) {
@@ -27,4 +24,4 @@ export const redirectFromShortUrl = async (req, res) => {
   } else {
     res.status(404).send("URL not found");
   }
-};
+});
