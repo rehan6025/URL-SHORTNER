@@ -31,6 +31,12 @@ export class NotFoundError extends AppError {
   }
 }
 
+export const wrapAsync = (fn) => {
+  return function (req, res, next) {
+    fn(req, res, next).catch(next);
+  };
+};
+
 export class ConflictError extends AppError {
   constructor(message = "Conflict occurred") {
     super(message, 409);
