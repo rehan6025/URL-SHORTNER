@@ -7,9 +7,16 @@ export const generateNanoId = (lenght) => {
 };
 
 export const signToken = (payload) => {
-  return jsonwebtoken.sign(payload, process.env.JWT_SECRET, cookieOptions);
+  return jsonwebtoken.sign(payload, process.env.JWT_SECRET, {
+    expiresIn: "1h",
+  });
 };
 
 export const verifyToken = (token) => {
-  return jsonwebtoken.verify(token, process.env.JWT_SECRET);
+  try {
+    const decoded = jsonwebtoken.verify(token, process.env.JWT_SECRET);
+    return decoded.id;
+  } catch (error) {
+    throw error;
+  }
 };

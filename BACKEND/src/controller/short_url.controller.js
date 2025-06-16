@@ -3,23 +3,21 @@ import {
   createShortUrlWithoutUser,
   createShortUrlWithUser,
 } from "../services/short_url.service.js";
+import { wrapAsync } from "../utils/errorHandler.js";
 
-export const createShortUrl = async (req, res, next) => {
-  try {
-    const { url, user_id } = req.body;
-    let shortUrl;
-    if (user_id) {
-      shortUrl = await createShortUrlWithUser(url, user_id);
-    } else {
-      shortUrl = await createShortUrlWithoutUser(url);
-    }
-    res.status(200).json({ shortUrl: process.env.APP_URL + shortUrl });
-  } catch (err) {
-    next(err);
+export const createShortUrl = wrapAsync(async (req, res, next) => {
+  const data = req.body;
+  let shortUrl;
+
+  if (req.user) {
+    shortUrl = await createShortUrlWithUser(data.url, req.user._id, data.slug);
+  } else {
+    shortUrl = await createShortUrlWithoutUser(data.url);
   }
-};
+  res.status(200).json({ shortUrl: process.env.APP_URL + shortUrl });
+});
 
-export const redirectFromShortUrl = async (req, res) => {
+export const redirectFromShortUrl = wrapAsync(async (req, res) => {
   const { id } = req.params;
   const url = await getShortUrl(id);
   if (url) {
@@ -27,4 +25,10 @@ export const redirectFromShortUrl = async (req, res) => {
   } else {
     res.status(404).send("URL not found");
   }
-};
+});
+
+export const createCustomShortUrl = wrapAsync(async (req, res, next) => {
+  const { url, slug } = req.body;
+  const shortUrl = await createShortUrlWithCustomUrl(url, slug);
+  res.status(200).json({ shortUrl: process.env.APP_URL + shortUrl });
+});

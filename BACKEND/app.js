@@ -6,11 +6,14 @@ import short_url from "./src/routes/short_url.route.js";
 import { errorHandler } from "./src/utils/errorHandler.js";
 import { redirectFromShortUrl } from "./src/controller/short_url.controller.js";
 import cors from "cors";
+import cookieParser from "cookie-parser";
+import { attachUser } from "./src/utils/attachUser.js";
 
 app.use(cors());
+app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
+app.use(attachUser);
 app.use("/api/auth", auth_routes);
 app.use("/api/create", short_url);
 app.get("/:id", redirectFromShortUrl);
