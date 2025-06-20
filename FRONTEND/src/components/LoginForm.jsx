@@ -1,24 +1,28 @@
 import React, { useState } from "react";
 import { loginUser } from "../api/user.api";
-import { useQueryClient } from "@tanstack/react-query";
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../store/slice/authSlice";
+import { useNavigate } from "@tanstack/react-router";
 
-const LoginForm = ({ onLoginSuccess }) => {
+const LoginForm = ({ state }) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const queryClient = useQueryClient();
+  const auth = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
     setError("");
     setLoading(true);
 
     try {
       const data = await loginUser(password, email);
-      queryClient.invalidateQueries({ queryKey: ["user"] });
+      dispatch(login(data.user));
+      navigate({ to: "/dashboard" });
       setLoading(false);
-      if (onLoginSuccess) onLoginSuccess(data);
+      console.log("sign in success");
     } catch (err) {
       setLoading(false);
       setError(
@@ -39,7 +43,7 @@ const LoginForm = ({ onLoginSuccess }) => {
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <div className="space-y-4">
         <div>
           <label
             htmlFor="email"
@@ -75,19 +79,20 @@ const LoginForm = ({ onLoginSuccess }) => {
         </div>
 
         <button
+          onClick={handleSubmit}
           type="submit"
           disabled={loading}
           className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
         >
           {loading ? "Logging in..." : "Login"}
         </button>
-      </form>
+      </div>
 
       <div className="mt-4 text-center text-sm text-gray-600">
         Don't have an account?{" "}
         <button
-          onClick={() => onLoginSuccess && onLoginSuccess({ register: true })}
-          className="text-blue-600 hover:underline"
+          onClick={() => state(false)}
+          className="text-blue-600 hover:underline cursor-pointer"
         >
           Register
         </button>
