@@ -21,6 +21,7 @@ export const login_user = wrapAsync(async (req, res, next) => {
 
 export const logout_user = (req, res) => {
   res.clearCookie("accessToken", cookieOptions);
+
   res.status(200).json({ message: "User logged out successfully" });
 };
 
