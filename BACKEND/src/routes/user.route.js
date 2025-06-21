@@ -4,6 +4,6 @@ import { getAllUserUrls } from "../controller/user.controller.js";
 
 const router = express.Router();
 
-router.post("/urls", authMiddleware, getAllUserUrls);
+router.get("/urls", authMiddleware, getAllUserUrls);
 
 export default router;
