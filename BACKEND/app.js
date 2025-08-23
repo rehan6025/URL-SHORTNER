@@ -26,6 +26,10 @@ app.use("/api/user", user_routes);
 app.get("/:id", redirectFromShortUrl);
 app.use(errorHandler);
 
+app.get("/", (req, res) => {
+    res.status(200).json({ message: "this api is working" });
+});
+
 app.listen(3000, () => {
     connectDB();
     console.log("Server is now running on http://localhost:3000");
