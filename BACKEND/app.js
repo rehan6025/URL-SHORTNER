@@ -11,10 +11,12 @@ import cookieParser from "cookie-parser";
 import { attachUser } from "./src/utils/attachUser.js";
 
 app.use(
-    cors({
-        origin: process.env.FRONTEND_URL || "http://localhost:5173", //todo use your hosted FE
-        credentials: true,
-    })
+  cors({
+    origin: process.env.FRONTEND_URL || "http://localhost:5173",
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "Cookie"],
+  })
 );
 app.use(cookieParser());
 app.use(express.json());
@@ -27,12 +29,12 @@ app.get("/:id", redirectFromShortUrl);
 app.use(errorHandler);
 
 app.get("/", (req, res) => {
-    res.status(200).json({ message: "this api is working" });
+  res.status(200).json({ message: "this api is working" });
 });
 
 app.listen(3000, () => {
-    connectDB();
-    console.log("Server is now running on http://localhost:3000");
+  connectDB();
+  console.log("Server is now running on http://localhost:3000");
 });
 
 //GET - redirection
