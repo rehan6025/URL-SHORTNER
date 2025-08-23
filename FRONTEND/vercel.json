@@ -11,5 +11,5 @@
         }
     ],
     "framework": "vite",
-    "nodeVersion": "18.x"
+    "nodeVersion": "22.18.0"
 }
